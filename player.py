@@ -1,3 +1,5 @@
+import numpy as np
+
 class Player:
     """
     A class to hold the player for the Euchre game.
@@ -46,3 +48,22 @@ class Player:
             self.hand.remove(card)
         except Exception as e:
             print(e)
+
+    def choose_card(self, random=False):
+        """
+        Determine the card to choose for the current trick.
+
+        Parameters
+        ----------
+        random : bool
+        
+        """
+        if len(self.hand) != 1:  # if there are more than 1 card in the hand
+            if random:  # choose a random card from the hand
+                card = np.random.choice(self.hand)
+            else:  # choose the best card from the hand
+                card = 0  # TODO: add function to get best card to choose
+            self.update_hand(card)
+        else:  # only 1 card left, have to play what is left
+            card = self.hand.pop(0)
+        return card

@@ -20,6 +20,8 @@ class Score:
             "spades": "clubs",
             "clubs": "spades"
         }
+        
+        self.suits = r'[♠♥♦♣]'
 
     def score_trick(self, players: list[Player], trump_suit: str, lead_suit: str) -> int:
         """
@@ -56,9 +58,8 @@ class Score:
 
         # loop through each player to determine highest card in trick
         for player in players:
-            match = re.match(r"(\d+)([♠♥♦♣])", player.current_card)  # use regex
-            rank = match.group(1)  # get rank
-            suit = match.group(2)  # get suit
+            rank = re.split(self.suits, player.current_card)[0] # get rank
+            suit = re.findall(self.suits, player.current_card)[0]  # get suit
 
             rank_value = self.rank_order[rank]
             if suit == trump_suit or (rank == 'J' and suit == left_bower_suit):  # is trump suite
