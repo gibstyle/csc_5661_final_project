@@ -119,3 +119,4 @@ class Score:
             'makers': makers_points,
             'defenders': defenders_points
         }  
+    
