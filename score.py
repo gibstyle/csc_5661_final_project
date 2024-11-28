@@ -1,10 +1,19 @@
-from player import Player
-
 import re
 
+from player import Player
+
+
 class Score:
+    """
+    A class to use as a helper to score winners of tricks and hands.
+    """
     def __init__(self):
-        self.rank_order = {"J": 6, "A": 5, "K": 4, "Q": 3, "10": 2, "9": 1}
+        """
+        The constructor for the class.
+        """
+        self.rank_order = {"J": 6, "A": 5, "K": 4, "Q": 3, "10": 2, "9": 1}  # rhe rank order of the cards
+        
+        # the left bower (off-suit jack)
         self.left_bower = {
             "hearts": "diamonds",
             "diamonds": "hearts",
@@ -12,7 +21,7 @@ class Score:
             "clubs": "spades"
         }
 
-    def score_trick(self, players: list[Player], trump_suit: str, lead_suit: str):
+    def score_trick(self, players: list[Player], trump_suit: str, lead_suit: str) -> int:
         """
         Calculate the winner of the trick.
 
@@ -70,7 +79,7 @@ class Score:
 
         return highest_player_id
 
-    def score_hand(self, players: list[Player], solo_call=False):
+    def score_hand(self, players: list[Player], solo_call=False) -> dict:
         """
         Calculate the points for the makers or the defenders.
 
@@ -90,9 +99,9 @@ class Score:
         makers_tricks_won = 0
         defenders_tricks_won = 0
         for player in players:
-            if player.team == 'makers':
+            if player.trick_team == 'makers':
                 makers_tricks_won += player.points
-            elif player.team == 'defenders':
+            elif player.trick_team == 'defenders':
                 defenders_tricks_won += player.points
 
         # calculate each teams points

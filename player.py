@@ -1,12 +1,26 @@
 class Player:
-    def __init__(self, id):
-        self.id = id
-        self.hand = []
+    """
+    A class to hold the player for the Euchre game.
+    """
+    def __init__(self, id: int, team_id: int) -> None:
+        """
+        The constructor for the class.
 
-        self.is_dealer: bool = False
-        self.points: int = 0
-        self.current_card: str = ''
-        self.team: str = ''  # either makers or defenders
+        Parameters
+        ----------
+        id : int
+            The id of the player (1 - 4).
+        team_id : int
+            The team id for which team the player is on to idenfity their partner.
+        """
+        self.id = id
+        self.team_id = team_id
+        
+        self.hand: list = []  # the current hand of the player for the hand
+        self.is_dealer: bool = False  # True if they are the dealer of current trick, False if not
+        self.points: int = 0  # the number of tricks won for the hand
+        self.current_card: str = ''  # the card the player used for the current trick
+        self.trick_team: str = ''  # either makers or defenders for the trick
 
     def set_hand(self, cards: list) -> None:
         """
