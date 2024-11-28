@@ -3,6 +3,11 @@ class Player:
         self.id = id
         self.hand = []
 
+        self.is_dealer: bool = False
+        self.points: int = 0
+        self.current_card: str = ''
+        self.team: str = ''  # either makers or defenders
+
     def set_hand(self, cards: list) -> None:
         """
         Set the hand for the player after dealing the cards.
