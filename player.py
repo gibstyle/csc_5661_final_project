@@ -67,3 +67,15 @@ class Player:
         else:  # only 1 card left, have to play what is left
             card = self.hand.pop(0)
         return card
+    
+    def choose_card_agent(self, agent):
+        """
+        Determine the card to choose for the current trick.
+
+        Parameters
+        ----------
+        agent : agent to make decision
+        
+        """
+        #TODO
+        pass

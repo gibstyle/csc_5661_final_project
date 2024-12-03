@@ -11,7 +11,7 @@ class Score:
         """
         The constructor for the class.
         """
-        self.rank_order = {"J": 6, "A": 5, "K": 4, "Q": 3, "10": 2, "9": 1}  # rhe rank order of the cards
+        self.rank_order = {"J": 3, "A": 6, "K": 5, "Q": 4, "10": 2, "9": 1}  # the rank order of the cards
         
         # the left bower (off-suit jack)
         self.left_bower = {
@@ -64,10 +64,10 @@ class Score:
             rank_value = self.rank_order[rank]
             if suit == trump_suit or (rank == 'J' and suit == left_bower_suit):  # is trump suite
                 # add highest rank card to rank to ensure it is higher than other cards
-                card_rank = rank_value + self.rank_order['J'] 
+                card_rank = rank_value + 6
                 # see if right or left bower
                 if rank == 'J':
-                    card_rank = card_rank + 2 if suit == trump_suit else card_rank + 1
+                    card_rank = card_rank + 5 if suit == trump_suit else card_rank + 4
             elif suit == lead_suit:  # non trump card that is lead suit
                 card_rank = rank_value  
             else:  # non trump card and not lead suit
