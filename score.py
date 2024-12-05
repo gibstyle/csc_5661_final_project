@@ -15,10 +15,10 @@ class Score:
         
         # the left bower (off-suit jack)
         self.left_bower = {
-            "hearts": "diamonds",
-            "diamonds": "hearts",
-            "spades": "clubs",
-            "clubs": "spades"
+            '♥': '♦',
+            '♦': '♥',
+            '♠': '♣',
+            '♣': '♠'
         }
         
         self.suits = r'[♠♥♦♣]'
