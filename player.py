@@ -35,6 +35,9 @@ class Player:
         """
         self.hand = cards
 
+    def remove_card(self, idx: int):
+        self.hand.pop(idx)
+
     def update_hand(self, card: str):
         """
         Remove the card from the hand.
