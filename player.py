@@ -1,10 +1,12 @@
 import numpy as np
 
+from agent import Agent
+
 class Player:
     """
     A class to hold the player for the Euchre game.
     """
-    def __init__(self, id: int, team_id: int) -> None:
+    def __init__(self, id: int, team_id: int, agent_config: dict) -> None:
         """
         The constructor for the class.
 
@@ -23,6 +25,9 @@ class Player:
         self.points: int = 0  # the number of tricks won for the hand
         self.current_card: str = ''  # the card the player used for the current trick
         self.trick_team: str = ''  # either makers or defenders for the trick
+
+        self.agent = Agent(config=agent_config)
+        self.data_t = {}
 
     def set_hand(self, cards: list) -> None:
         """
@@ -61,8 +66,6 @@ class Player:
         if len(self.hand) != 1:  # if there are more than 1 card in the hand
             if random:  # choose a random card from the hand
                 card = np.random.choice(self.hand)
-            else:  # choose the best card from the hand
-                card = 0  # TODO: add function to get best card to choose
             self.update_hand(card)
         else:  # only 1 card left, have to play what is left
             card = self.hand.pop(0)
