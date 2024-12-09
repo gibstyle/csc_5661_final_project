@@ -23,7 +23,7 @@ class Score:
         
         self.suits = r'[♠♥♦♣]'
 
-    def score_trick(self, players: list[Player], trump_suit: str, lead_suit: str) -> int:
+    def score_trick(self, actions: dict, trump_suit: str, lead_suit: str) -> int:
         """
         Calculate the winner of the trick.
 
@@ -39,8 +39,8 @@ class Score:
 
         Parameters
         ----------
-        players : list[Player]
-            The list of players in the game.
+        actions : dict
+            The actions the players took where key = player id, value = card (action)
         trump_suit : str
             The trump suit for the trick.
         lead_suit : str
@@ -57,9 +57,9 @@ class Score:
         highest_player_id = None
 
         # loop through each player to determine highest card in trick
-        for player in players:
-            rank = re.split(self.suits, player.current_card)[0] # get rank
-            suit = re.findall(self.suits, player.current_card)[0]  # get suit
+        for id, action in actions.items():
+            rank = re.split(self.suits, action['action'])[0] # get rank
+            suit = re.findall(self.suits, action['action'])[0]  # get suit
 
             rank_value = self.rank_order[rank]
             if suit == trump_suit or (rank == 'J' and suit == left_bower_suit):  # is trump suite
@@ -76,7 +76,7 @@ class Score:
             # compare to see if new highest card found
             if highest_card == -1 or card_rank > highest_card:
                 highest_card = card_rank
-                highest_player_id = player.id
+                highest_player_id = id
 
         return highest_player_id
 

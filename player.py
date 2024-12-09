@@ -6,7 +6,7 @@ class Player:
     """
     A class to hold the player for the Euchre game.
     """
-    def __init__(self, id: int, team_id: int, agent_config: dict) -> None:
+    def __init__(self, id: int, team_id: int, agent_config: dict, train: bool) -> None:
         """
         The constructor for the class.
 
@@ -28,6 +28,7 @@ class Player:
 
         self.agent = Agent(config=agent_config)
         self.data_t = {}
+        self.train = train
 
     def set_hand(self, cards: list) -> None:
         """

@@ -66,7 +66,7 @@ class Agent:
         '''
         s_tA = []    #init a list to hold the state action information
         for a in self.config['A']:    #loop over actions
-            s_tA.append(s_t + a)    #add and record
+            s_tA.append(s_t + [self.config['card_values'][a]])    #add and record
         return torch.tensor(s_tA).to(torch.float32)
 
     #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    
@@ -148,15 +148,15 @@ class Agent:
             approximator_main = self.Q(options)  # main appoximator
             approximator_target = self.Q_prime(options)  # target approximator
             
-            if not d['done']:    #if this state didn't end the episode...
-                if not self.double_dqn:  # if not double dqn
-                    max_a_Q = float(max(approximator_target))    #compute the future value using the target approximator
-                else:  # if double dqn
-                    max_a_Q = float(self.Q_prime(options[torch.argmax(approximator_main)]))  # compute target for online main approximator
-                y_t += self.config['gamma'] * max_a_Q    #update the target with the future value
+            
+            if not self.double_dqn:  # if not double dqn
+                max_a_Q = float(max(approximator_target))    #compute the future value using the target approximator
+            else:  # if double dqn
+                max_a_Q = float(self.Q_prime(options[torch.argmax(approximator_main)]))  # compute target for online main approximator
+            y_t += self.config['gamma'] * max_a_Q    #update the target with the future value
 
-                if self.prioritized_replay:  # if using prioritized replay, update the priority of the current data
-                    self.p[idx] = abs(d['r_t+1'] + self.config['gamma'] * float(max(approximator_target)) - float(self.Q(torch.tensor(d['d_s_a']).to(torch.float32)))) + self.config['omega']
+            if self.prioritized_replay:  # if using prioritized replay, update the priority of the current data
+                self.p[idx] = abs(d['r_t+1'] + self.config['gamma'] * float(max(approximator_target)) - float(self.Q(torch.tensor(d['d_s_a']).to(torch.float32)))) + self.config['omega']
 
             y.append(y_t)    #record the target   
         return [X, y]
