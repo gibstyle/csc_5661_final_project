@@ -1,6 +1,6 @@
 import numpy as np
 
-from agent import Agent
+from dqn_agent import Agent
 
 class Player:
     """
