@@ -1,6 +1,6 @@
 import re
 
-from player import Player
+from players.player import Player
 
 
 class Score:
@@ -11,14 +11,21 @@ class Score:
         """
         The constructor for the class.
         """
-        self.rank_order = {"J": 3, "A": 6, "K": 5, "Q": 4, "10": 2, "9": 1}  # the rank order of the cards
+        self.rank_order = {
+            "A": 6,
+            "K": 5,
+            "Q": 4,
+            "J": 3,
+            "10": 2,
+            "9": 1
+        }  # the rank order of the cards
         
         # the left bower (off-suit jack)
         self.left_bower = {
-            "hearts": "diamonds",
-            "diamonds": "hearts",
-            "spades": "clubs",
-            "clubs": "spades"
+            "♥": "♦",
+            "♦": "♥",
+            "♠": "♣",
+            "♣": "♠"
         }
         
         self.suits = r'[♠♥♦♣]'
@@ -61,15 +68,15 @@ class Score:
             rank = re.split(self.suits, action['action'])[0] # get rank
             suit = re.findall(self.suits, action['action'])[0]  # get suit
 
-            rank_value = self.rank_order[rank]
-            if suit == trump_suit or (rank == 'J' and suit == left_bower_suit):  # is trump suite
+            card_rank = self.rank_order[rank]
+            if suit == trump_suit or (rank == 'J' and suit == left_bower_suit):  # is trump suit
                 # add highest rank card to rank to ensure it is higher than other cards
-                card_rank = rank_value + 6
+                card_rank += 7
                 # see if right or left bower
                 if rank == 'J':
                     card_rank = card_rank + 5 if suit == trump_suit else card_rank + 4
             elif suit == lead_suit:  # non trump card that is lead suit
-                card_rank = rank_value  
+                card_rank = self.rank_order[rank]  
             else:  # non trump card and not lead suit
                 card_rank = 0
 
