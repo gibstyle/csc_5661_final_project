@@ -52,17 +52,34 @@ class DQNAgent(Player):
             self.config['n_step_return'] = 0
 
     def choose_action(self, state):
-        hand = self.get_trick_hand(state)
-        self.config['A'] = hand
-        print(state)
-        action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
+        if state['phase'] == 0:  # bidding
+            self.config['A'] = [0, 1]  # 0 for pass, 1 for "order up"
+            action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
+        
+        elif state['phase'] == 1:  # remove card
+            self.config['A'] = self.hand + [state['top_card']]
+            action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
+            if action != state['top_card']:
+                self.update_hand(action)  # remove the action (card) from the hand
+                self.hand.append(state['top_card'])  # add in the top card to the hand
+
+        elif state['phase'] == 2: # trump selection
+            self.config['A'] = state['suits']
+            action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))        
+        
+        else:
+            hand = self.get_trick_hand(state)
+            self.config['A'] = hand
+            action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
+            self.update_hand(action)
+
         self.config['A'] = self.A
-        self.update_hand(action)
         return action
     
-    def train_update(self, state_t_1, reward_t_1, count):
+    def train_update(self, state_t_1, reward_t_1, done, count):
         self.data_t['r_t+1'] = reward_t_1
         self.data_t['s_t+1'] = state_t_1
+        self.data_t['done'] = done
         self.D.append(self.data_t)
         self.p.append(5 ** self.config['omega'])
         if len(self.D) > self.config['M']:

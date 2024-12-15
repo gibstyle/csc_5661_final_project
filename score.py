@@ -30,6 +30,37 @@ class Score:
         
         self.suits = r'[♠♥♦♣]'
 
+    def calculate_hand_strength(self, hand, trump_suit):
+        """
+        Calculate the strength of a given hand based on the trump suit.
+        
+        Parameters:
+            hand (list): A list of cards, e.g., ["J♠", "9♠", "A♦"].
+            trump_suit (str): The trump suit, e.g., "♠".
+            
+        Returns:
+            int: The calculated hand strength.
+        """
+        strength = 0
+        
+        for card in hand:
+            rank = card[:-1]  # Extract rank (e.g., "J" from "J♠")
+            suit = card[-1]   # Extract suit (e.g., "♠" from "J♠")
+            
+            # Check if the card is a trump card
+            if suit == trump_suit:
+                strength += self.rank_order.get(rank, 0) + 5  # Boost for trump cards
+            
+            # Check if the card is the left bower (off-suit jack of the same color)
+            elif rank == "J" and suit == self.left_bower.get(trump_suit, ""):
+                strength += self.rank_order.get(rank, 0) + 4  # Slightly less than a trump Jack
+            
+            # Non-trump cards
+            else:
+                strength += self.rank_order.get(rank, 0)
+        
+        return strength
+
     def score_trick(self, actions: dict, trump_suit: str, lead_suit: str) -> int:
         """
         Calculate the winner of the trick.
