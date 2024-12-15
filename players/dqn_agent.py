@@ -53,6 +53,7 @@ class DQNAgent(Player):
     def choose_action(self, state):
         hand = self.get_trick_hand(state)
         self.config['A'] = hand
+        print(state)
         action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
         self.config['A'] = self.A
         self.update_hand(action)
@@ -75,6 +76,12 @@ class DQNAgent(Player):
 
         if count % self.config['C'] == 0:    #if it is time for an update...
             self.update_Q_prime()    #overwrite the target approximator
+
+    def choose_trump(self, state, trump, suits, count):
+        print(state)
+    
+    def discard_card(self, state):
+        print(state)
 
     #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     def Q_reset(self):

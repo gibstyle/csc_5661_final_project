@@ -38,7 +38,26 @@ class Player(ABC):
 
     @abstractmethod
     def train_update(self, state_t_1, reward_t_1, count):
+        """
+        Abstract method to be implemented by subclasses.
+        Given a state, reward, and count, the agent is updated
+        """
         pass
+
+    @abstractmethod
+    def choose_trump(self, state, trump, suits, count):
+        """
+        Abstract method to be implemented by subclasses.
+        Given a state, this function returns an action.
+        """
+        pass
+
+    @abstractmethod
+    def discard_card(self, state):
+        """
+        Abstract method to be implemented by subclasses.
+        Given a state, this function takes a 6 card hand and discards a card.
+        """
 
     def get_trick_hand(self, state: dict):
         lead_suit = state.get('lead_suit', None)
