@@ -38,6 +38,7 @@ class DQNAgent(Player):
         self.Q = MLP(input_size=self.config['input_size'], hidden_size=self.config['hidden_size'])
         self.Q.train()    #Set the model to training mode
         self.Q_prime = copy.deepcopy(self.Q)
+        self.Q_trump = copy.deepcopy(self.Q)
         self.criterion = torch.nn.MSELoss()
         self.optimizer = optim.Adam(self.Q.parameters(), lr=self.config['alpha'])
         self.D = []  # init the replay buffer
@@ -77,11 +78,25 @@ class DQNAgent(Player):
         if count % self.config['C'] == 0:    #if it is time for an update...
             self.update_Q_prime()    #overwrite the target approximator
 
+    #TODO implement choosing trump
     def choose_trump(self, state, trump, suits, count):
-        print(state)
+        actions = []
+        current_suits = copy.deepcopy(suits)
+        current_suits.remove(trump)
+        state = copy.deepcopy(self.hand)
+        state.append(trump)
+        state = np.array(state).flatten().tolist()
+        if count <= 4:
+            actions = self.calls[0:2]
+        elif count <= 7:
+            actions = self.calls
+        else:
+            actions = current_suits
+        
     
-    def discard_card(self, state):
-        print(state)
+    #TODO implement discard cards
+    def discard_card(self):
+        pass
 
     #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     def Q_reset(self):
@@ -215,3 +230,18 @@ class DQNAgent(Player):
         self.optimizer.zero_grad()    #zero out the gradients    
         loss.backward()    #compute gradients
         self.optimizer.step()    #perform a single optimzation step
+
+    #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   
+    # This section contains the methods for the trump choosing and card discarder
+    #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  
+    def trump_pi(self, s_t, actions, epsilon):
+        '''A function to choose actions using Q-values
+            Takes:
+                s_t -- a torch tensor with the first six columns the state information and the last two columns the actions
+                epsilon -- the probability of choosing a random action
+        '''
+        if np.random.uniform() < epsilon:    #if a random action is chosen...
+            a = actions[np.random.choice(a = range(len(actions)))]     #return the random action
+        else:
+            a = actions[torch.argmax(self.Q_trump(self.make_options(s_t)))]    #otherwise return the action with the highest Q-value as predicted by the MLP
+        return a

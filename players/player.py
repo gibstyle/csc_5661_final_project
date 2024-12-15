@@ -24,6 +24,7 @@ class Player(ABC):
         self.points: int = 0  # the number of tricks won for the hand
         self.current_card: str = ''  # the card the player used for the current trick
         self.trick_team: str = ''  # either makers or defenders for the trick
+        self.calls = ['call','pass','♠', '♥', '♦', '♣']
 
         self.train = train
         self.data_t = {}

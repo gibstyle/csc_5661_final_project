@@ -1,6 +1,7 @@
 from .player import Player
 
 import random
+import copy
 
 
 class RandomAgent(Player):
@@ -22,16 +23,16 @@ class RandomAgent(Player):
         pass
 
     def choose_trump(self, state, trump, suits, count):
-        current_suits = suits.copy()
+        current_suits = copy.deepcopy(suits)
         current_suits.remove(trump)
         if count <= 4:
             if random.random() < 0.7:
-                return 'pass'
+                return self.calls[1]
             else:
-                return 'call'
+                return self.calls[0]
         elif count <= 7:
             if random.random() < 0.7:
-                return 'pass'
+                return self.calls[1]
             else:
                 return random.choice(current_suits)
         elif count == 8:
