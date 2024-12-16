@@ -64,9 +64,11 @@ class DQNAgent(Player):
                 self.hand.append(state['top_card'])  # add in the top card to the hand
 
         elif state['phase'] == 2: # trump selection
-            self.config['A'] = state['suits']
+            self.config['A'] = [-1] + state['suits'] # -1 for pass, a suit for remainder options
+            if state['dealer']:
+                self.config['A'] = state['suits']
             action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))        
-        
+
         else:
             hand = self.get_trick_hand(state)
             self.config['A'] = hand
@@ -90,6 +92,8 @@ class DQNAgent(Player):
             batch = self.make_batch()    #make a batch for training from the memory buffer
             X = batch[0]    #pull out the features
             y = batch[1]    #pull out the target
+            print(X)
+            print(y)
             self.update_Q(X,y)    #update the MLP modeling Q
 
         if count % self.config['C'] == 0:    #if it is time for an update...

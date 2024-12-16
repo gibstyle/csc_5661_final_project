@@ -96,8 +96,8 @@ class Score:
 
         # loop through each player to determine highest card in trick
         for id, action in actions.items():
-            rank = re.split(self.suits, action['action'])[0] # get rank
-            suit = re.findall(self.suits, action['action'])[0]  # get suit
+            rank = re.split(self.suits, action)[0] # get rank
+            suit = re.findall(self.suits, action)[0]  # get suit
 
             card_rank = self.rank_order[rank]
             if suit == trump_suit or (rank == 'J' and suit == left_bower_suit):  # is trump suit
