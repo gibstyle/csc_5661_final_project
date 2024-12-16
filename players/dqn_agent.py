@@ -53,18 +53,20 @@ class DQNAgent(Player):
 
     def choose_action(self, state):
         if state['phase'] == 0:  # bidding
-            self.config['A'] = [0, 1]  # 0 for pass, 1 for "order up"
+            self.config['A'] = [-3, -2]  # 0 for pass, 1 for "order up"
             action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
         
         elif state['phase'] == 1:  # remove card
-            self.config['A'] = self.hand + [state['top_card']]
+            actions = self.hand + [state['top_card']]
+            self.config['A'] = [self.config['card_values'][card] for card in actions]
             action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
             if action != state['top_card']:
                 self.update_hand(action)  # remove the action (card) from the hand
                 self.hand.append(state['top_card'])  # add in the top card to the hand
 
         elif state['phase'] == 2: # trump selection
-            self.config['A'] = [-1] + state['suits'] # -1 for pass, a suit for remainder options
+            actions = [-1] + (state['suits'] * -10) # -1 for pass, a suit for remainder options
+            self.config['A'] = actions
             if state['dealer']:
                 self.config['A'] = state['suits']
             action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))        
@@ -92,8 +94,6 @@ class DQNAgent(Player):
             batch = self.make_batch()    #make a batch for training from the memory buffer
             X = batch[0]    #pull out the features
             y = batch[1]    #pull out the target
-            print(X)
-            print(y)
             self.update_Q(X,y)    #update the MLP modeling Q
 
         if count % self.config['C'] == 0:    #if it is time for an update...
@@ -139,7 +139,8 @@ class DQNAgent(Player):
         '''
         s_tA = []    #init a list to hold the state action information
         for a in self.config['A']:    #loop over actions
-            s_tA.append(s_t + [self.config['card_values'][a]])    #add and record
+            s_tA.append(s_t + [a])    #add and record
+
         return torch.tensor(s_tA).to(torch.float32)
 
     #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    
