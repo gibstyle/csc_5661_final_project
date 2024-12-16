@@ -53,19 +53,20 @@ class DQNAgent(Player):
 
     def choose_action(self, state):
         if state['phase'] == 0:  # bidding
-            self.config['A'] = [-3, -2]  # 0 for pass, 1 for "order up"
+            self.config['A'] = [-3, -2]  # -3 for pass, -2 for "order up"
             action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
         
         elif state['phase'] == 1:  # remove card
             actions = self.hand + [state['top_card']]
             self.config['A'] = [self.config['card_values'][card] for card in actions]
             action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
-            if action != state['top_card']:
-                self.update_hand(action)  # remove the action (card) from the hand
+            action_update = actions[self.config["A"].index(action)]
+            if action_update != state['top_card']:
+                self.update_hand(action_update)  # remove the action (card) from the hand
                 self.hand.append(state['top_card'])  # add in the top card to the hand
 
         elif state['phase'] == 2: # trump selection
-            actions = [-1] + (state['suits'] * -10) # -1 for pass, a suit for remainder options
+            actions = [-1] + state['suits'] # -1 for pass, a suit for remainder options
             self.config['A'] = actions
             if state['dealer']:
                 self.config['A'] = state['suits']
@@ -73,9 +74,9 @@ class DQNAgent(Player):
 
         else:
             hand = self.get_trick_hand(state)
-            self.config['A'] = hand
+            self.config['A'] = [self.config['card_values'][card] for card in hand]
             action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
-            self.update_hand(action)
+            self.update_hand(hand[self.config["A"].index(action)])
 
         self.config['A'] = self.A
         return action
