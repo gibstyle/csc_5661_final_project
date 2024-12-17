@@ -46,7 +46,7 @@ class Player(ABC):
         pass
 
     @abstractmethod
-    def choose_trump(self, state, trump, suits, count):
+    def choose_trump(self, state, trump, suits, count, epi):
         """
         Abstract method to be implemented by subclasses.
         Given a state, this function returns an action.

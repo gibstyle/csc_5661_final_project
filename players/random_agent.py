@@ -22,7 +22,7 @@ class RandomAgent(Player):
     def train_update(self, state_t_1, reward_t_1, count):
         pass
 
-    def choose_trump(self, state, trump, suits, count):
+    def choose_trump(self, state, trump, suits, count, epi):
         current_suits = copy.deepcopy(suits)
         current_suits.remove(trump)
         if count <= 4:
@@ -39,5 +39,5 @@ class RandomAgent(Player):
             return random.choice(current_suits)
 
     
-    def discard_card(self):
+    def discard_card(self, state):
         self.hand.remove(random.choice(self.hand))

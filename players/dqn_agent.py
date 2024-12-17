@@ -79,19 +79,22 @@ class DQNAgent(Player):
             self.update_Q_prime()    #overwrite the target approximator
 
     #TODO implement choosing trump
-    def choose_trump(self, state, trump, suits, count):
+    def choose_trump(self, state, trump, suits, count, epi):
         actions = []
         current_suits = copy.deepcopy(suits)
         current_suits.remove(trump)
         state = copy.deepcopy(self.hand)
-        state.append(trump)
-        state = np.array(state).flatten().tolist()
         if count <= 4:
             actions = self.calls[0:2]
         elif count <= 7:
             actions = self.calls
         else:
             actions = current_suits
+        self.config['A'] = actions
+        action = self.pi(s_t=state, epsilon=self.epsilon_t(count=state['count'], n_episodes=epi))
+        self.config['A'] = self.A
+        return action
+        
         
     
     #TODO implement discard cards
@@ -230,18 +233,3 @@ class DQNAgent(Player):
         self.optimizer.zero_grad()    #zero out the gradients    
         loss.backward()    #compute gradients
         self.optimizer.step()    #perform a single optimzation step
-
-    #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   
-    # This section contains the methods for the trump choosing and card discarder
-    #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  
-    def trump_pi(self, s_t, actions, epsilon):
-        '''A function to choose actions using Q-values
-            Takes:
-                s_t -- a torch tensor with the first six columns the state information and the last two columns the actions
-                epsilon -- the probability of choosing a random action
-        '''
-        if np.random.uniform() < epsilon:    #if a random action is chosen...
-            a = actions[np.random.choice(a = range(len(actions)))]     #return the random action
-        else:
-            a = actions[torch.argmax(self.Q_trump(self.make_options(s_t)))]    #otherwise return the action with the highest Q-value as predicted by the MLP
-        return a
