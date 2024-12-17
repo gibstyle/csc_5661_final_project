@@ -72,7 +72,7 @@ class DQNAgent(Player):
                 self.config['A'] = state['suits']
             action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))        
 
-        else:
+        else:  # trick
             hand = self.get_trick_hand(state)
             self.config['A'] = [self.config['card_values'][card] for card in hand]
             action = self.pi(s_t=state['s_t'], epsilon=self.epsilon_t(count=state['count'], n_episodes=state['episode']))
